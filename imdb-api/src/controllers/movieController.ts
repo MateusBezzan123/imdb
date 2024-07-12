@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import prisma from '../models/prismaClient';
+import handleValidationErrors from '../utils/handleValidationErrors';
 
-export const addMovie = async (req: any, res: any) => {
+export const addMovie = async (req: Request, res: Response) => {
+  handleValidationErrors(req, res);
+
   const { title, director, genre, actors } = req.body;
-  const { user } = req;
+  const { user } = req as any;
 
   if (user.role !== 'admin') {
     return res.status(403).json({ message: 'Only admins can add movies' });
@@ -16,35 +19,29 @@ export const addMovie = async (req: any, res: any) => {
 
     res.status(201).json(newMovie);
   } catch (error) {
-    res.status(500).json({ message: 'Error adding movie', error });
+    res.status(500).json({ message: 'Error adding movie', error: (error as Error).message });
   }
 };
 
-export const voteMovie = async (req: any, res: any) => {
+export const voteMovie = async (req: Request, res: Response) => {
+  handleValidationErrors(req, res);
+
   const { id } = req.params;
   const { value } = req.body;
-  const { user } = req;
+  const { user } = req as any;
 
   if (user.role !== 'user') {
     return res.status(403).json({ message: 'Only users can vote' });
   }
 
-  if (value < 0 || value > 4) {
-    return res.status(400).json({ message: 'Invalid vote value' });
-  }
-
   try {
     const vote = await prisma.vote.create({
-      data: {
-        value,
-        userId: user.id,
-        movieId: Number(id),
-      },
+      data: { value, userId: user.id, movieId: Number(id) },
     });
 
     res.status(201).json(vote);
   } catch (error) {
-    res.status(500).json({ message: 'Error voting', error });
+    res.status(500).json({ message: 'Error voting', error: (error as Error).message });
   }
 };
 
@@ -63,7 +60,7 @@ export const listMovies = async (req: Request, res: Response) => {
 
     res.json(movies);
   } catch (error) {
-    res.status(500).json({ message: 'Error listing movies', error });
+    res.status(500).json({ message: 'Error listing movies', error: (error as Error).message });
   }
 };
 
@@ -73,9 +70,7 @@ export const getMovieDetails = async (req: Request, res: Response) => {
   try {
     const movie = await prisma.movie.findUnique({
       where: { id: Number(id) },
-      include: {
-        votes: true,
-      },
+      include: { votes: true },
     });
 
     if (!movie) {
@@ -86,6 +81,6 @@ export const getMovieDetails = async (req: Request, res: Response) => {
 
     res.json({ ...movie, averageVote });
   } catch (error) {
-    res.status(500).json({ message: 'Error getting movie details', error });
+    res.status(500).json({ message: 'Error getting movie details', error: (error as Error).message });
   }
 };

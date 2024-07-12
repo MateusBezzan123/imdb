@@ -2,8 +2,11 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../models/prismaClient';
+import handleValidationErrors from '../utils/handleValidationErrors';
 
 export const register = async (req: Request, res: Response) => {
+  handleValidationErrors(req, res);
+
   const { name, email, password, role } = req.body;
   const { user } = req as any;
 
@@ -15,21 +18,21 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     const newUser = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        role,
-      },
+      data: { name, email, password: hashedPassword, role },
     });
 
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating user', error });
+    if (error instanceof Error && 'code' in error && (error as any).code === 'P2002') {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+    res.status(500).json({ message: 'Error creating user', error: (error as Error).message });
   }
 };
 
 export const login = async (req: Request, res: Response) => {
+  handleValidationErrors(req, res);
+
   const { email, password } = req.body;
 
   try {
@@ -51,14 +54,16 @@ export const login = async (req: Request, res: Response) => {
 
     res.json({ token });
   } catch (error) {
-    res.status(500).json({ message: 'Error logging in', error });
+    res.status(500).json({ message: 'Error logging in', error: (error as Error).message });
   }
 };
 
 export const editUser = async (req: Request, res: Response) => {
+  handleValidationErrors(req, res);
+
   const { id } = req.params;
   const { name, email } = req.body;
-  const { user } = req as any; // Type assertion to include custom user property
+  const { user } = req as any;
 
   if (user.id !== Number(id) && user.role !== 'admin') {
     return res.status(403).json({ message: 'Permission denied' });
@@ -72,13 +77,16 @@ export const editUser = async (req: Request, res: Response) => {
 
     res.json(updatedUser);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating user', error });
+    if (error instanceof Error && 'code' in error && (error as any).code === 'P2002') {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+    res.status(500).json({ message: 'Error updating user', error: (error as Error).message });
   }
 };
 
 export const deactivateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { user } = req as any; // Type assertion to include custom user property
+  const { user } = req as any;
 
   if (user.id !== Number(id) && user.role !== 'admin') {
     return res.status(403).json({ message: 'Permission denied' });
@@ -92,6 +100,6 @@ export const deactivateUser = async (req: Request, res: Response) => {
 
     res.json(updatedUser);
   } catch (error) {
-    res.status(500).json({ message: 'Error deactivating user', error });
+    res.status(500).json({ message: 'Error deactivating user', error: (error as Error).message });
   }
 };
