@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import MovieCard from '../components/MovieCard';
+import styled from 'styled-components';
 
 interface Movie {
   id: number;
@@ -9,6 +10,21 @@ interface Movie {
   genre: string;
   actors: string;
 }
+
+const Container = styled.div`
+  padding: ${({ theme }) => theme.spacing.lg};
+`;
+
+const Title = styled.h2`
+  text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+`;
+
+const MovieGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
 
 const MovieList: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -27,14 +43,14 @@ const MovieList: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Movie List</h2>
-      <div className="movie-list">
+    <Container>
+      <Title>Movie List</Title>
+      <MovieGrid>
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
-      </div>
-    </div>
+      </MovieGrid>
+    </Container>
   );
 };
 
