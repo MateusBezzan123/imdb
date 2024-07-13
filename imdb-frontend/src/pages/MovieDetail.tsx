@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api, { setAuthToken } from '../services/api';
 import styled from 'styled-components';
+import { showErrorToast } from '../utils/toast';
 
 interface Movie {
   id: number;
@@ -57,7 +58,8 @@ const MovieDetail: React.FC = () => {
         const response = await api.get(`/movies/${id}`);
         setMovie(response.data);
       } catch (error) {
-        console.error('Failed to fetch movie details', error);
+        console.error('Falha ao buscar detalhes do filme', error);
+        showErrorToast('Falha ao buscar detalhes do filme');
       }
     };
 

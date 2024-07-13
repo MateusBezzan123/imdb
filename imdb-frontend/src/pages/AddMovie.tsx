@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import api from '../services/api';
 import styled from 'styled-components';
+import { showSuccessToast, showErrorToast } from '../utils/toast';
 
 const Container = styled.div`
   max-width: 600px;
@@ -92,9 +93,11 @@ const AddMovie: React.FC = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
+      showSuccessToast('Filme adicionado com sucesso');
       navigate('/movies');
     } catch (error) {
-      console.error('Failed to add movie', error);
+      console.error('Falha ao adicionar filme', error);
+      showErrorToast('Falha ao adicionar filme');
     }
   };
 
