@@ -23,6 +23,7 @@ model Movie {
   director String
   genre    String
   actors   String
+  image    String?  
   votes    Vote[]
 }
 

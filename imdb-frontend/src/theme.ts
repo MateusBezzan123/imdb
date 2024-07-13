@@ -4,12 +4,13 @@ const theme: DefaultTheme = {
   colors: {
     primary: '#333',
     secondary: '#555',
-    accent: '#007bff',
-    background: '#f8f9fa',
+    accent: '#f5c518',
+    background: '#ffffff',
     text: '#333',
     white: '#ffffff',
     lightGray: '#f1f1f1',
     darkGray: '#6c757d',
+    black: '#000000',
   },
   fonts: {
     primary: 'Arial, sans-serif',

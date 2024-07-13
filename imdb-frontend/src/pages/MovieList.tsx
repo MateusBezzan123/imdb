@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import api, { setAuthToken } from '../services/api';
 import MovieCard from '../components/MovieCard';
 import styled from 'styled-components';
 
@@ -9,6 +9,7 @@ interface Movie {
   director: string;
   genre: string;
   actors: string;
+  image: string;
 }
 
 const Container = styled.div`
@@ -31,6 +32,11 @@ const MovieList: React.FC = () => {
 
   useEffect(() => {
     const fetchMovies = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        setAuthToken(token);
+      }
+      
       try {
         const response = await api.get('/movies');
         setMovies(response.data);
@@ -44,7 +50,7 @@ const MovieList: React.FC = () => {
 
   return (
     <Container>
-      <Title>Movie List</Title>
+      <Title>Lista de Filmes</Title>
       <MovieGrid>
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />

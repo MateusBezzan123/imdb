@@ -22,6 +22,12 @@ const GlobalStyle = createGlobalStyle`
     font-family: ${({ theme }) => theme.fonts.primary};
     cursor: pointer;
   }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: ${({ theme }) => theme.spacing.md};
+  }
 `;
 
 export default GlobalStyle;

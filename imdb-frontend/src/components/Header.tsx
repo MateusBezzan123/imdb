@@ -6,21 +6,12 @@ const HeaderWrapper = styled.header`
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.white};
   padding: ${({ theme }) => theme.spacing.md};
-  text-align: center;
-
-  @media (max-width: 768px) {
-    text-align: left;
-  }
 `;
 
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
 `;
 
 const NavList = styled.ul`
@@ -28,11 +19,6 @@ const NavList = styled.ul`
   padding: 0;
   display: flex;
   gap: ${({ theme }) => theme.spacing.md};
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: ${({ theme }) => theme.spacing.sm};
-  }
 `;
 
 const NavItem = styled.li`
@@ -60,17 +46,19 @@ const Header: React.FC = () => {
 
   return (
     <HeaderWrapper>
-      <Nav>
-        <NavList>
-          <NavItem>
-            <Link to="/movies">Movies</Link>
-          </NavItem>
-          <NavItem>
-            <Link to="/add-movie">Add Movie</Link>
-          </NavItem>
-        </NavList>
-        <NavButton onClick={handleLogout}>Logout</NavButton>
-      </Nav>
+      <div className="container">
+        <Nav>
+          <NavList>
+            <NavItem>
+              <Link to="/movies">Filmes</Link>
+            </NavItem>
+            <NavItem>
+              <Link to="/add-movie">Adicionar Filme</Link>
+            </NavItem>
+          </NavList>
+          <NavButton onClick={handleLogout}>Sair</NavButton>
+        </Nav>
+      </div>
     </HeaderWrapper>
   );
 };

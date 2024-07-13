@@ -7,6 +7,7 @@ export const addMovie = async (req: Request, res: Response) => {
 
   const { title, director, genre, actors } = req.body;
   const { user } = req as any;
+  const image = req.file ? `uploads/${req.file.filename}` : null;
 
   if (user.role !== 'admin') {
     return res.status(403).json({ message: 'Only admins can add movies' });
@@ -14,7 +15,7 @@ export const addMovie = async (req: Request, res: Response) => {
 
   try {
     const newMovie = await prisma.movie.create({
-      data: { title, director, genre, actors },
+      data: { title, director, genre, actors, image },
     });
 
     res.status(201).json(newMovie);
@@ -22,7 +23,6 @@ export const addMovie = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error adding movie', error: (error as Error).message });
   }
 };
-
 export const voteMovie = async (req: Request, res: Response) => {
   handleValidationErrors(req, res);
 

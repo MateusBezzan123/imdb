@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDropzone } from 'react-dropzone';
 import api from '../services/api';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  max-width: 400px;
+  max-width: 600px;
   margin: 2rem auto;
   padding: ${({ theme }) => theme.spacing.md};
   border: 1px solid ${({ theme }) => theme.colors.lightGray};
@@ -53,17 +54,44 @@ const Button = styled.button`
   }
 `;
 
+const DropzoneContainer = styled.div`
+  border: 2px dashed ${({ theme }) => theme.colors.darkGray};
+  padding: ${({ theme }) => theme.spacing.md};
+  text-align: center;
+  cursor: pointer;
+`;
+
 const AddMovie: React.FC = () => {
   const [title, setTitle] = useState('');
   const [director, setDirector] = useState('');
   const [genre, setGenre] = useState('');
   const [actors, setActors] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const navigate = useNavigate();
+
+  const onDrop = (acceptedFiles: File[]) => {
+    setFile(acceptedFiles[0]);
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   const handleAddMovie = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('director', director);
+    formData.append('genre', genre);
+    formData.append('actors', actors);
+    if (file) {
+      formData.append('image', file);
+    }
+
     try {
-      await api.post('/movies/add', { title, director, genre, actors });
+      await api.post('/movies/add', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       navigate('/movies');
     } catch (error) {
       console.error('Failed to add movie', error);
@@ -72,10 +100,10 @@ const AddMovie: React.FC = () => {
 
   return (
     <Container>
-      <Title>Add Movie</Title>
+      <Title>Adicionar Filme</Title>
       <Form onSubmit={handleAddMovie}>
         <FormGroup>
-          <Label>Title</Label>
+          <Label>Título</Label>
           <Input
             type="text"
             value={title}
@@ -84,7 +112,7 @@ const AddMovie: React.FC = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label>Director</Label>
+          <Label>Diretor</Label>
           <Input
             type="text"
             value={director}
@@ -93,7 +121,7 @@ const AddMovie: React.FC = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label>Genre</Label>
+          <Label>Gênero</Label>
           <Input
             type="text"
             value={genre}
@@ -102,7 +130,7 @@ const AddMovie: React.FC = () => {
           />
         </FormGroup>
         <FormGroup>
-          <Label>Actors</Label>
+          <Label>Atores</Label>
           <Input
             type="text"
             value={actors}
@@ -110,7 +138,14 @@ const AddMovie: React.FC = () => {
             required
           />
         </FormGroup>
-        <Button type="submit">Add Movie</Button>
+        <FormGroup>
+          <Label>Imagem</Label>
+          <DropzoneContainer {...getRootProps()}>
+            <input {...getInputProps()} />
+            {file ? <p>{file.name}</p> : <p>Arraste uma imagem ou clique para selecionar</p>}
+          </DropzoneContainer>
+        </FormGroup>
+        <Button type="submit">Adicionar Filme</Button>
       </Form>
     </Container>
   );

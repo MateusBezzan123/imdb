@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import { addMovie, voteMovie, listMovies, getMovieDetails } from '../controllers/movieController';
 import authMiddleware from '../middleware/auth';
+import upload from '../middleware/upload';
 
 const router = Router();
 
@@ -16,10 +17,8 @@ const voteValidations = [
   check('value').isInt({ min: 0, max: 4 }).withMessage('Vote value must be between 0 and 4'),
 ];
 
-router.post('/add', authMiddleware, movieValidations, addMovie);
-
+router.post('/add', authMiddleware, upload.single('image'), movieValidations, addMovie);
 router.post('/vote/:id', authMiddleware, voteValidations, voteMovie);
-
 router.get('/', authMiddleware, listMovies);
 router.get('/:id', authMiddleware, getMovieDetails);
 

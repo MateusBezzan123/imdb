@@ -9,6 +9,7 @@ interface MovieCardProps {
     director: string;
     genre: string;
     actors: string;
+    image: string;
   };
 }
 
@@ -20,11 +21,31 @@ const Card = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius};
   box-shadow: ${({ theme }) => theme.boxShadow};
   background-color: ${({ theme }) => theme.colors.white};
+  display: flex;
 
   @media (max-width: 768px) {
+    flex-direction: column;
     margin: ${({ theme }) => theme.spacing.sm};
     padding: ${({ theme }) => theme.spacing.sm};
   }
+`;
+
+const Image = styled.img`
+  width: 150px;
+  height: 225px;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  margin-right: ${({ theme }) => theme.spacing.md};
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    margin-right: 0;
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+  }
+`;
+
+const InfoContainer = styled.div`
+  flex: 1;
 `;
 
 const Title = styled.h3`
@@ -48,11 +69,14 @@ const DetailsLink = styled(Link)`
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => (
   <Card>
-    <Title>{movie.title}</Title>
-    <Info>Director: {movie.director}</Info>
-    <Info>Genre: {movie.genre}</Info>
-    <Info>Actors: {movie.actors}</Info>
-    <DetailsLink to={`/movie/${movie.id}`}>Details</DetailsLink>
+    {movie.image && <Image src={`http://localhost:3001/${movie.image}`} alt={movie.title} />}
+    <InfoContainer>
+      <Title>{movie.title}</Title>
+      <Info>Diretor: {movie.director}</Info>
+      <Info>Gênero: {movie.genre}</Info>
+      <Info>Atores: {movie.actors}</Info>
+      <DetailsLink to={`/movie/${movie.id}`}>Detalhes</DetailsLink>
+    </InfoContainer>
   </Card>
 );
 

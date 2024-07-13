@@ -10,6 +10,7 @@ interface Movie {
   genre: string;
   actors: string;
   averageVote: number;
+  image: string;
 }
 
 const Container = styled.div`
@@ -20,10 +21,20 @@ const Container = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius};
   box-shadow: ${({ theme }) => theme.boxShadow};
   background-color: ${({ theme }) => theme.colors.white};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Title = styled.h2`
   text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+`;
+
+const Image = styled.img`
+  width: 300px;
+  height: auto;
+  border-radius: ${({ theme }) => theme.borderRadius};
   margin-bottom: ${({ theme }) => theme.spacing.md};
 `;
 
@@ -54,11 +65,12 @@ const MovieDetail: React.FC = () => {
 
   return (
     <Container>
+      {movie.image && <Image src={`/${movie.image}`} alt={movie.title} />}
       <Title>{movie.title}</Title>
-      <Info>Director: {movie.director}</Info>
-      <Info>Genre: {movie.genre}</Info>
-      <Info>Actors: {movie.actors}</Info>
-      <Info>Average Vote: {movie.averageVote}</Info>
+      <Info>Diretor: {movie.director}</Info>
+      <Info>Gênero: {movie.genre}</Info>
+      <Info>Atores: {movie.actors}</Info>
+      <Info>Nota Média: {movie.averageVote}</Info>
     </Container>
   );
 };
