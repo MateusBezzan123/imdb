@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../services/api';
+import api, { setAuthToken } from '../services/api';
 import styled from 'styled-components';
 
 interface Movie {
@@ -48,6 +48,11 @@ const MovieDetail: React.FC = () => {
 
   useEffect(() => {
     const fetchMovie = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        setAuthToken(token);
+      }
+      
       try {
         const response = await api.get(`/movies/${id}`);
         setMovie(response.data);
@@ -65,7 +70,7 @@ const MovieDetail: React.FC = () => {
 
   return (
     <Container>
-      {movie.image && <Image src={`/${movie.image}`} alt={movie.title} />}
+      {movie.image && <Image src={`http://localhost:3001/${movie.image}`} alt={movie.title} />}
       <Title>{movie.title}</Title>
       <Info>Diretor: {movie.director}</Info>
       <Info>Gênero: {movie.genre}</Info>
